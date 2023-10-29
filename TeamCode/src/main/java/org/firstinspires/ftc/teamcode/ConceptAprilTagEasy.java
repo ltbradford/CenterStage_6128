@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Canvas;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -36,9 +38,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Mat;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
@@ -101,7 +106,6 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-
         waitForStart();
 
         if (opModeIsActive()) {
@@ -128,7 +132,30 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         visionPortal.close();
 
     }   // end method runOpMode()
-
+//
+//    class SpikeDetector extends VisionProcessor {
+//        @Override
+//        public void init(int width, int height, CameraCalibration calibration) {
+//
+//            int zone1Left = width/4;
+//            int zone1Right = width/4 + width/6;
+//
+//            int zone2Left = width/2 - width/4;
+//            int zone2Right = width/2 + width/4;
+//
+//        }
+//
+//        @Override
+//        public Object processFrame(Mat frame, long captureTimeNanos) {
+//            return null;
+//        }
+//
+//        @Override
+//        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+//            canvas.drawRect();
+//
+//        }
+//    }
     /**
      * Initialize the AprilTag processor.
      */
