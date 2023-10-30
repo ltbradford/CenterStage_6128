@@ -30,6 +30,8 @@ public class Autodrive {
 
     public static double turnGain =-0.02;
 
+    public static double driveGain =0.01;
+
     public static double minturnpower = 0.45;
 
     public Autodrive(DcMotor leftFrontDrive, DcMotor leftBackDrive, DcMotor rightFrontDrive, DcMotor rightBackDrive, IMU imu) {
@@ -54,7 +56,7 @@ public class Autodrive {
     }
 
     public void drive(int distanceInches) {
-        int ticksDistance = 4* (distanceInches * TICKS_PER_INCH);
+        int ticksDistance = 4 * (distanceInches * TICKS_PER_INCH);
 
         final int startingPosition =
                         leftBackDrive.getCurrentPosition() +
@@ -62,23 +64,37 @@ public class Autodrive {
                         leftFrontDrive.getCurrentPosition() +
                         rightFrontDrive.getCurrentPosition();
 
-        int ticksTravelled = 0;
+        int targetPosition = startingPosition + ticksDistance;
 
-        while (ticksTravelled < ticksDistance) {
-            int currentPos = leftBackDrive.getCurrentPosition() +
+        //stop if within 0.5 inch
+        int tolerance = TICKS_PER_INCH/2;
+
+        int error = targetPosition - startingPosition;
+
+        while ( Math.abs(error) > tolerance ){
+
+            double axial = error * driveGain;
+
+            // If the magnitude of axial power is less than the min power to move,
+            // then adjust will be greater than 1.0. Scale axial power without changing
+            // it's sign to ensure it's strong enough.
+            // If scale is less than 1, then don't make the power any weaker.
+
+            double adjust = MIN_POWER_TO_MOVE/ Math.abs(axial);
+
+            if (adjust > 1.0) {
+                axial *= adjust;
+            }
+            stuff (axial, 0, 0);
+
+            int currentPos =
+                    leftBackDrive.getCurrentPosition() +
                     rightBackDrive.getCurrentPosition() +
                     leftFrontDrive.getCurrentPosition() +
                     rightFrontDrive.getCurrentPosition();
 
-            ticksTravelled = currentPos - startingPosition;
-            int remainingInches = (ticksDistance - ticksTravelled)/TICKS_PER_INCH;
+            error = currentPos - startingPosition;
 
-            if (remainingInches > 10) {
-                stuff(1.0, 0, 0); // Full power when more than 10 inches away
-            } else {
-                double axial = Math.max(remainingInches/10.0, MIN_POWER_TO_MOVE);
-                stuff(axial, 0, 0);
-            }
         }
 
         // Stop the motors. We made it.
@@ -88,9 +104,12 @@ public class Autodrive {
     public void turn(final double degrees) {
         imu.resetYaw();
 
+        //stop if within 3 degrees
+        int tolerance = 3;
+
         double error = degrees - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        while ( Math.abs(error)>3  ) {
+        while ( Math.abs(error) > tolerance ) {
             double yaw = error * turnGain;
 
             // If the magnitude of yaw power is less than the min turn power,
