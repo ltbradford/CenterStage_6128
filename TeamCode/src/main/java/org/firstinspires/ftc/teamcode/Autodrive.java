@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -38,6 +38,19 @@ public class Autodrive {
         this.rightFrontDrive = rightFrontDrive;
         this.rightBackDrive = rightBackDrive;
         this.imu = imu;
+    }
+
+    public Autodrive(HardwareMap hardwareMap) {
+        imu = hardwareMap.get(IMU.class, "imu");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftfront");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftback");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightfront");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rightback");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void drive(int distanceInches) {
