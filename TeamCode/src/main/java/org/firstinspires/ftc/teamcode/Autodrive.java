@@ -93,8 +93,11 @@ public class Autodrive {
                     leftFrontDrive.getCurrentPosition() +
                     rightFrontDrive.getCurrentPosition();
 
-            error = currentPos - startingPosition;
+            error = targetPosition - currentPos;
 
+            TelemetryPacket stats = new TelemetryPacket();
+            stats.put("Axial", error);
+            FtcDashboard.getInstance().sendTelemetryPacket(stats);
         }
 
         // Stop the motors. We made it.
