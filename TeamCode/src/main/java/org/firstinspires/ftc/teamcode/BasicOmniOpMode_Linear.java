@@ -40,6 +40,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.lang.reflect.Type;
+
 /*
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -130,19 +132,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         int rightBackStart = rightBackDrive.getCurrentPosition();
         imu.resetYaw();
 
-        driveForward(36);
-
-        turn(90);
+        Autodrive driver = new Autodrive(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive, imu);
+        driver.drive(36);
+        driver.turn(90);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            if (go > 0) {
-                telemetry.addLine("Driving " + go + " inches");
-                telemetry.update();
-                go = 0;
-                driveForward(go);
-            }
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
