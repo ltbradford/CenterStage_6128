@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.util.function.Supplier;
+
 /*
  * basic autonomous movement "blueprints" for driving and turning.
  * Used mainly to be able to get used by other files instead of writing
@@ -34,6 +36,9 @@ public class Autodrive {
 
     public static double minturnpower = 0.45;
 
+    // By default, keep running
+    private Supplier<Boolean> keepRunning = () -> true;
+
     public Autodrive(DcMotor leftFrontDrive, DcMotor leftBackDrive, DcMotor rightFrontDrive, DcMotor rightBackDrive, IMU imu) {
         this.leftFrontDrive = leftFrontDrive;
         this.leftBackDrive = leftBackDrive;
@@ -42,7 +47,7 @@ public class Autodrive {
         this.imu = imu;
     }
 
-    public Autodrive(HardwareMap hardwareMap) {
+    public Autodrive(HardwareMap hardwareMap, Supplier<Boolean> keepRunning) {
         imu = hardwareMap.get(IMU.class, "imu");
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftfront");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftback");
@@ -53,6 +58,8 @@ public class Autodrive {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        this.keepRunning = keepRunning;
     }
 
     public void drive(int distanceInches) {
@@ -69,7 +76,7 @@ public class Autodrive {
         int error = targetPosition - startingPosition;
 
         // Stop when roughly within one quarter of an inch.
-        while ( Math.abs(error) > TICKS_PER_INCH ) {
+        while (keepRunning.get() && Math.abs(error) > TICKS_PER_INCH ) {
             double axial = error * DriveGain;
 
             // If the magnitude of axial power is less than the min drive power,

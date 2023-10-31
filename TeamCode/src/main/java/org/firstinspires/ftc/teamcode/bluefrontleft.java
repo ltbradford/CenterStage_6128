@@ -11,7 +11,7 @@ public class bluefrontleft extends LinearOpMode {
 
         waitForStart();
 
-        Autodrive driver = new Autodrive(hardwareMap);
+        Autodrive driver = new Autodrive(hardwareMap, this::opModeIsActive);
         driver.drive(-20);
         driver.turn(90);
         driver.drive(10);
