@@ -26,9 +26,11 @@ public class Autodrive {
 
     public static int TICKS_PER_INCH = 40;
 
-    public static double MIN_POWER_TO_MOVE = 0.0;
+    public static double MIN_POWER_TO_MOVE = 0.2;
 
     public static double turnGain =-0.02;
+
+    public static double DriveGain = 0.0005;
 
     public static double minturnpower = 0.45;
 
@@ -62,23 +64,36 @@ public class Autodrive {
                         leftFrontDrive.getCurrentPosition() +
                         rightFrontDrive.getCurrentPosition();
 
-        int ticksTravelled = 0;
+        int targetPosition = startingPosition + ticksDistance;
 
-        while (ticksTravelled < ticksDistance) {
-            int currentPos = leftBackDrive.getCurrentPosition() +
-                    rightBackDrive.getCurrentPosition() +
-                    leftFrontDrive.getCurrentPosition() +
-                    rightFrontDrive.getCurrentPosition();
+        int error = targetPosition - startingPosition;
 
-            ticksTravelled = currentPos - startingPosition;
-            int remainingInches = (ticksDistance - ticksTravelled)/TICKS_PER_INCH;
+        // Stop when roughly within one quarter of an inch.
+        while ( Math.abs(error) > TICKS_PER_INCH ) {
+            double axial = error * DriveGain;
 
-            if (remainingInches > 10) {
-                stuff(1.0, 0, 0); // Full power when more than 10 inches away
-            } else {
-                double axial = Math.max(remainingInches/10.0, MIN_POWER_TO_MOVE);
-                stuff(axial, 0, 0);
+            // If the magnitude of axial power is less than the min drive power,
+            // then adjust will be greater than 1.0. Scale without changing
+            // it's sign to ensure it's strong enough.
+            // If scale is less than 1, then don't make the power any weaker.
+            double adjust = MIN_POWER_TO_MOVE / Math.abs(axial);
+            if (adjust > 1.0) {
+                axial *= adjust;
             }
+            stuff(axial, 0, 0);
+
+            int currentPos =
+                            leftBackDrive.getCurrentPosition() +
+                            rightBackDrive.getCurrentPosition() +
+                            leftFrontDrive.getCurrentPosition() +
+                            rightFrontDrive.getCurrentPosition();
+
+            error = targetPosition - currentPos;
+
+            TelemetryPacket stats = new TelemetryPacket();
+            stats.put("Axial", error);
+            FtcDashboard.getInstance().sendTelemetryPacket(stats);
+
         }
 
         // Stop the motors. We made it.
