@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="Test Wheels", group="TEST")
 public class Test_Wheels extends LinearOpMode {
+
+    //This OpMode is simply meant to test each wheel individually to see if things got wired
+    //correctly and for correct mapping.
     @Override
     public void runOpMode() {
         Autodrive driver = new Autodrive(hardwareMap);
