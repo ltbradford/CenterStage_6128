@@ -25,19 +25,19 @@ public class Test_Wheels extends LinearOpMode {
             // This will run the left front wheel power (slowly) while the square
             // button is pressed on the game controller. Do the same for each of
             // the other wheels; assigning each to their own button to test individually.
-            if (gamepad1.square) {
+            if (gamepad1.x) {
                 driver.leftFrontDrive.setPower(0.2);
             } else driver.leftFrontDrive.setPower(0);
 
-            if (gamepad1.triangle) {
+            if (gamepad1.y) {
                 driver.leftBackDrive.setPower(0.2);
             } else driver.leftBackDrive.setPower(0);
 
-            if (gamepad1.circle) {
+            if (gamepad1.b) {
                 driver.rightFrontDrive.setPower(0.2);
             } else driver.rightFrontDrive.setPower(0);
 
-            if (gamepad1.cross) {
+            if (gamepad1.a) {
                 driver.rightBackDrive.setPower(0.2);
             } else driver.rightBackDrive.setPower(0);
         }
