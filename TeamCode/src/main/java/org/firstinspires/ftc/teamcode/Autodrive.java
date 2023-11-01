@@ -17,10 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Autodrive {
 
-    private final DcMotor leftFrontDrive;
-    private final DcMotor leftBackDrive;
-    private final DcMotor rightFrontDrive;
-    private final DcMotor rightBackDrive;
+    public final DcMotor leftFrontDrive;
+    public final DcMotor leftBackDrive;
+    public final DcMotor rightFrontDrive;
+    public final DcMotor rightBackDrive;
 
     private final IMU imu;
 
